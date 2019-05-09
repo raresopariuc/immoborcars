@@ -9,15 +9,11 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 
 @Entity
-@Table(name = "houses")
+@Table(name = "apartments")
 @AllArgsConstructor
 @Builder
-public class House extends Immobile {
+public class Apartment extends Immobile {
     @NotNull
     @PositiveOrZero
-    private Integer gardenSurface;
-
-    @NotNull
-    @PositiveOrZero
-    private Integer numberOfFloors;
+    private Integer floorNumber;
 }

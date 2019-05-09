@@ -1,10 +1,26 @@
 package com.raresopariuc.licenta.model;
 
 import com.raresopariuc.licenta.model.audit.UserDateAudit;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public abstract class Immobile extends UserDateAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,10 +33,6 @@ public abstract class Immobile extends UserDateAudit {
     @NotNull
     @Positive
     private Integer internalSurface;
-
-    @NotNull
-    @PositiveOrZero
-    private Integer gardenSurface;
 
     @NotNull
     @PositiveOrZero
