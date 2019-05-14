@@ -2,6 +2,7 @@ package com.raresopariuc.licenta.service;
 
 import com.raresopariuc.licenta.model.House;
 import com.raresopariuc.licenta.model.User;
+import com.raresopariuc.licenta.payload.HouseRequest;
 import com.raresopariuc.licenta.payload.HouseResponse;
 import com.raresopariuc.licenta.payload.PagedResponse;
 import com.raresopariuc.licenta.repository.HouseRepository;
@@ -65,5 +66,19 @@ public class HouseService {
                 .collect(Collectors.toMap(User::getId, Function.identity()));
 
         return creatorMap;
+    }
+
+    public House createHouse(HouseRequest houseRequest) {
+        House house = House.builder()
+                .title(houseRequest.getTitle())
+                .internalSurface(houseRequest.getInternalSurface())
+                .yearOfConstruction(houseRequest.getYearOfConstruction())
+                .numberOfRooms(houseRequest.getNumberOfRooms())
+                .numberOfBathrooms(houseRequest.getNumberOfBathrooms())
+                .gardenSurface(houseRequest.getGardenSurface())
+                .numberOfFloors(houseRequest.getNumberOfFloors())
+                .build();
+
+        return houseRepository.save(house);
     }
 }
