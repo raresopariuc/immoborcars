@@ -38,6 +38,12 @@ public class HouseController {
         return houseService.getAllHouses(currentUser, page, size);
     }
 
+    @GetMapping("/{houseId}")
+    public HouseResponse getHouseById(@CurrentUser UserPrincipal currentUser,
+                                      @PathVariable Long houseId) {
+        return houseService.getHouseById(houseId, currentUser);
+    }
+
     @PostMapping
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> createHouse(@Valid @RequestBody HouseRequest houseRequest) {

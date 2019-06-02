@@ -18,7 +18,15 @@ public class ModelMapper {
         return HouseResponse.builder()
                 .id(house.getId())
                 .title(house.getTitle())
+                .pictureUrl(house.getPictureUrl())
+                .internalSurface(house.getInternalSurface())
+                .yearOfConstruction(house.getYearOfConstruction())
+                .numberOfRooms(house.getNumberOfRooms())
+                .numberOfBathrooms(house.getNumberOfBathrooms())
+                .gardenSurface(house.getGardenSurface())
+                .numberOfFloors(house.getNumberOfFloors())
                 .createdBy(creatorSummary)
+                .creationDateTime(house.getCreatedAt())
                 .build();
     }
 

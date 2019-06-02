@@ -22,6 +22,10 @@ public abstract class Immobile extends UserDateAudit {
     @Size(max = 255)
     private String title;
 
+    private String pictureUrl;
+
+    private byte[][] images;
+
     @NotNull
     @Positive
     private Integer internalSurface;
