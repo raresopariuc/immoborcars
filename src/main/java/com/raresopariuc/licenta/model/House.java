@@ -5,10 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
+import java.util.List;
 
 @Entity
 @Table(name = "houses")
@@ -25,9 +25,11 @@ public class House extends Immobile {
     private Integer numberOfFloors;
 
     @Builder
-    public House(String title, Integer internalSurface, Integer yearOfConstruction, Integer numberOfRooms,
+    public House(String title, String description, Integer price, Integer internalSurface, Integer yearOfConstruction, Integer numberOfRooms,
                  Integer numberOfBathrooms, Integer gardenSurface, Integer numberOfFloors) {
         this.setTitle(title);
+        this.setDescription(description);
+        this.setPrice(price);
         this.setInternalSurface(internalSurface);
         this.setYearOfConstruction(yearOfConstruction);
         this.setNumberOfRooms(numberOfRooms);

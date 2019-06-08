@@ -1,5 +1,8 @@
 package com.raresopariuc.licenta.controller;
 
+import com.google.common.collect.Lists;
+import com.raresopariuc.licenta.exception.ResourceNotFoundException;
+import com.raresopariuc.licenta.model.DBFile;
 import com.raresopariuc.licenta.model.House;
 import com.raresopariuc.licenta.payload.ApiResponse;
 import com.raresopariuc.licenta.payload.HouseRequest;
@@ -8,10 +11,12 @@ import com.raresopariuc.licenta.payload.PagedResponse;
 import com.raresopariuc.licenta.repository.HouseRepository;
 import com.raresopariuc.licenta.security.CurrentUser;
 import com.raresopariuc.licenta.security.UserPrincipal;
+import com.raresopariuc.licenta.service.DBFileStorageService;
 import com.raresopariuc.licenta.service.HouseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +24,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/houses")
@@ -28,6 +35,9 @@ public class HouseController {
 
     @Autowired
     private HouseService houseService;
+
+    @Autowired
+    private DBFileStorageService dbFileStorageService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HouseController.class);
 
@@ -54,6 +64,48 @@ public class HouseController {
                 .buildAndExpand(house.getId()).toUri();
 
         return ResponseEntity.created(location)
-                .body(new ApiResponse(true, "House successfully created!"));
+                .body(new ApiResponse(true, "House successfully created!", house.getId().toString()));
+    }
+
+    @DeleteMapping("/{houseId}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> deleteHouse(@CurrentUser UserPrincipal currentUser,
+                                         @PathVariable Long houseId) {
+
+        if(currentUser.getUsername().equals(
+                houseService.getHouseById(houseId, currentUser).getCreatedBy().getUsername())) {
+            houseRepository.deleteById(houseId);
+        }
+
+        return houseRepository.findById(houseId).isPresent() ?
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse(false, "House wasn't deleted!", houseId.toString())) :
+                ResponseEntity.ok()
+                    .body(new ApiResponse(true, "House successfully deleted!", houseId.toString()));
+    }
+
+//    @PutMapping
+//    @PreAuthorize("hasRole('USER')")
+//    public ResponseEntity<?> updateHouse(@Valid @RequestBody House house) {
+//        House updatedHouse = houseService.updateHouse(house);
+//
+//        return ResponseEntity.ok().body(updatedHouse);
+//    }
+
+    @PostMapping("/pictures/{houseId}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> addPicture(@CurrentUser UserPrincipal currentUser, @PathVariable Long houseId, @RequestBody String pictureFileId) {
+
+        House house = houseRepository.findById(houseId).orElseThrow(
+                () -> new ResourceNotFoundException("House", "id", houseId));
+
+        List<DBFile> pictureFiles = house.getPictureFiles();
+        pictureFiles.add(dbFileStorageService.getFile(pictureFileId));
+
+        house.setPictureFiles(pictureFiles);
+
+        House updatedHouse = houseRepository.save(house);
+
+        return ResponseEntity.ok().body(updatedHouse);
     }
 }
