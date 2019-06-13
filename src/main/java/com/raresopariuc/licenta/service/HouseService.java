@@ -109,12 +109,16 @@ public class HouseService {
     public House createHouse(HouseRequest houseRequest) {
         House house = House.builder()
                 .title(houseRequest.getTitle())
+                .description(houseRequest.getDescription())
+                .price(houseRequest.getPrice())
                 .internalSurface(houseRequest.getInternalSurface())
                 .yearOfConstruction(houseRequest.getYearOfConstruction())
                 .numberOfRooms(houseRequest.getNumberOfRooms())
                 .numberOfBathrooms(houseRequest.getNumberOfBathrooms())
                 .gardenSurface(houseRequest.getGardenSurface())
                 .numberOfFloors(houseRequest.getNumberOfFloors())
+                .latitude(houseRequest.getLatitude())
+                .longitude(houseRequest.getLongitude())
                 .build();
 
         return houseRepository.save(house);

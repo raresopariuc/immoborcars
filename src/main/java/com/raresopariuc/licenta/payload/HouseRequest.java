@@ -13,6 +13,12 @@ public class HouseRequest {
     @Size(max = 255)
     private String title;
 
+    private String description;
+
+    @NotNull
+    @Valid
+    private Integer price;
+
     @NotNull
     @Valid
     private Integer internalSurface;
@@ -36,4 +42,8 @@ public class HouseRequest {
     @NotNull
     @Valid
     private Integer numberOfFloors;
+
+    private Double latitude;
+
+    private Double longitude;
 }

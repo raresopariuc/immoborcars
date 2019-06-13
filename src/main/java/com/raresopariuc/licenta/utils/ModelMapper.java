@@ -1,9 +1,12 @@
 package com.raresopariuc.licenta.utils;
 
+import com.raresopariuc.licenta.model.DBFile;
 import com.raresopariuc.licenta.model.House;
 import com.raresopariuc.licenta.model.User;
 import com.raresopariuc.licenta.payload.HouseResponse;
 import com.raresopariuc.licenta.payload.UserSummary;
+
+import java.util.stream.Collectors;
 
 public class ModelMapper {
 
@@ -18,7 +21,9 @@ public class ModelMapper {
         return HouseResponse.builder()
                 .id(house.getId())
                 .title(house.getTitle())
-                .pictureUrl(house.getPictureUrl())
+                .description(house.getDescription())
+                .price(house.getPrice())
+                .pictureFileIds(house.getPictureFiles().stream().map(DBFile::getId).collect(Collectors.toList()))
                 .internalSurface(house.getInternalSurface())
                 .yearOfConstruction(house.getYearOfConstruction())
                 .numberOfRooms(house.getNumberOfRooms())
@@ -27,6 +32,8 @@ public class ModelMapper {
                 .numberOfFloors(house.getNumberOfFloors())
                 .createdBy(creatorSummary)
                 .creationDateTime(house.getCreatedAt())
+                .latitude(house.getLatitude())
+                .longitude(house.getLongitude())
                 .build();
     }
 

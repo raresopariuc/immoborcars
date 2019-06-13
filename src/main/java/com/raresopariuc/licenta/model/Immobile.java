@@ -4,11 +4,10 @@ import com.raresopariuc.licenta.model.audit.UserDateAudit;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @MappedSuperclass
 @Getter
@@ -22,9 +21,15 @@ public abstract class Immobile extends UserDateAudit {
     @Size(max = 255)
     private String title;
 
-    private String pictureUrl;
+    @Lob
+    private String description;
 
-    private byte[][] images;
+    @NotNull
+    @Positive
+    private Integer price;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DBFile> pictureFiles = new ArrayList<>();
 
     @NotNull
     @Positive
@@ -41,4 +46,8 @@ public abstract class Immobile extends UserDateAudit {
     @NotNull
     @Positive
     private Integer numberOfBathrooms;
+
+    private Double latitude;
+
+    private Double longitude;
 }

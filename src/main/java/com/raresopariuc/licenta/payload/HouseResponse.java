@@ -4,13 +4,16 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.Instant;
+import java.util.List;
 
 @Getter
 @Builder
 public class HouseResponse {
     private Long id;
     private String title;
-    private String pictureUrl;
+    private String description;
+    private Integer price;
+    private List<String> pictureFileIds;
     private Integer internalSurface;
     private Integer yearOfConstruction;
     private Integer numberOfRooms;
@@ -19,4 +22,6 @@ public class HouseResponse {
     private Integer numberOfFloors;
     private UserSummary createdBy;
     private Instant creationDateTime;
+    private Double latitude;
+    private Double longitude;
 }
