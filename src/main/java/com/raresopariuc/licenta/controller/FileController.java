@@ -1,9 +1,13 @@
 package com.raresopariuc.licenta.controller;
 
+import com.raresopariuc.licenta.model.Apartment;
+import com.raresopariuc.licenta.model.Car;
 import com.raresopariuc.licenta.model.DBFile;
 import com.raresopariuc.licenta.model.House;
 import com.raresopariuc.licenta.payload.ApiResponse;
 import com.raresopariuc.licenta.payload.UploadFileResponse;
+import com.raresopariuc.licenta.repository.ApartmentRepository;
+import com.raresopariuc.licenta.repository.CarRepository;
 import com.raresopariuc.licenta.repository.DBFileRepository;
 import com.raresopariuc.licenta.repository.HouseRepository;
 import com.raresopariuc.licenta.service.DBFileStorageService;
@@ -46,6 +50,12 @@ public class FileController {
     @Autowired
     private HouseRepository houseRepository;
 
+    @Autowired
+    private ApartmentRepository apartmentRepository;
+
+    @Autowired
+    private CarRepository carRepository;
+
     @PostMapping("/uploadFilepond")
     public UploadFileResponse uploadFilepond(@RequestParam("filepond") MultipartFile file) {
         DBFile dbFile = DBFileStorageService.storeFile(file);
@@ -70,10 +80,18 @@ public class FileController {
 
         DBFile pictureFile = DBFileStorageService.getFile(input);
         Optional<House> house = houseRepository.findHouseByPictureFiles_IdEquals(pictureFile.getId());
+        Optional<Apartment> apartment = apartmentRepository.findApartmentByPictureFiles_IdEquals(pictureFile.getId());
+        Optional<Car> car = carRepository.findCarByPictureFiles_IdEquals(pictureFile.getId());
 
         if (house.isPresent()) {
             house.get().getPictureFiles().remove(pictureFile);
             houseRepository.save(house.get()); //pictureFile remains orphan and is automatically deleted
+        } else if (apartment.isPresent()) {
+            apartment.get().getPictureFiles().remove(pictureFile);
+            apartmentRepository.save(apartment.get());
+        } else if (car.isPresent()) {
+            car.get().getPictureFiles().remove(pictureFile);
+            carRepository.save(car.get());
         } else {
             dbFileRepository.delete(DBFileStorageService.getFile(input));
         }

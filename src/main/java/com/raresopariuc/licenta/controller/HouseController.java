@@ -1,6 +1,6 @@
 package com.raresopariuc.licenta.controller;
 
-import com.google.common.collect.Lists;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.raresopariuc.licenta.exception.ResourceNotFoundException;
 import com.raresopariuc.licenta.model.DBFile;
 import com.raresopariuc.licenta.model.House;
@@ -23,10 +23,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 import static com.raresopariuc.licenta.utils.UpdateUtils.updateHouseFromHouseRequest;
 
@@ -55,6 +54,14 @@ public class HouseController {
     public HouseResponse getHouseById(@CurrentUser UserPrincipal currentUser,
                                       @PathVariable Long houseId) {
         return houseService.getHouseById(houseId, currentUser);
+    }
+
+    @PostMapping("/searchByFilter")
+    public PagedResponse<HouseResponse> getHousesByFilter(@CurrentUser UserPrincipal currentUser,
+                                                          @RequestParam(value = "page", defaultValue = "0") int page,
+                                                          @RequestParam(value = "size", defaultValue = "30") int size,
+                                                          @RequestBody String filters) throws IOException, JsonParseException {
+        return houseService.getHousesByFilter(currentUser, page, size, filters);
     }
 
     @PostMapping

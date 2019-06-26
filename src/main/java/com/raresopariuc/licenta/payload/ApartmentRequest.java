@@ -1,0 +1,47 @@
+package com.raresopariuc.licenta.payload;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+@Getter
+@Setter
+public class ApartmentRequest {
+    @NotBlank
+    @Size(max = 255)
+    private String title;
+
+    private String description;
+
+    @NotNull
+    @Valid
+    private Integer price;
+
+    @NotNull
+    @Valid
+    private Integer internalSurface;
+
+    @NotNull
+    @Valid
+    private Integer yearOfConstruction;
+
+    @NotNull
+    @Valid
+    private Integer numberOfRooms;
+
+    @NotNull
+    @Valid
+    private Integer numberOfBathrooms;
+
+    @NotNull
+    @Valid
+    private Integer floorNumber;
+
+    private Double latitude;
+
+    private Double longitude;
+}

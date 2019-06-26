@@ -3,10 +3,14 @@ package com.raresopariuc.licenta.controller;
 import com.raresopariuc.licenta.exception.ResourceNotFoundException;
 import com.raresopariuc.licenta.model.User;
 import com.raresopariuc.licenta.payload.*;
+import com.raresopariuc.licenta.repository.ApartmentRepository;
+import com.raresopariuc.licenta.repository.CarRepository;
 import com.raresopariuc.licenta.repository.HouseRepository;
 import com.raresopariuc.licenta.repository.UserRepository;
 import com.raresopariuc.licenta.security.CurrentUser;
 import com.raresopariuc.licenta.security.UserPrincipal;
+import com.raresopariuc.licenta.service.ApartmentService;
+import com.raresopariuc.licenta.service.CarService;
 import com.raresopariuc.licenta.service.HouseService;
 import com.raresopariuc.licenta.utils.AppConstants;
 import org.slf4j.Logger;
@@ -26,14 +30,27 @@ public class UserController {
     private HouseRepository houseRepository;
 
     @Autowired
+    private ApartmentRepository apartmentRepository;
+
+    @Autowired
+    private CarRepository carRepository;
+
+    @Autowired
     private HouseService houseService;
+
+    @Autowired
+    private ApartmentService apartmentService;
+
+    @Autowired
+    private CarService carService;
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @GetMapping("/user/me")
     @PreAuthorize("hasRole('USER')")
     public UserSummary getCurrentUser(@CurrentUser UserPrincipal currentUser) {
-        UserSummary userSummary = new UserSummary(currentUser.getId(), currentUser.getUsername(), currentUser.getName());
+        UserSummary userSummary = new UserSummary(currentUser.getId(), currentUser.getUsername(),
+                currentUser.getName(), currentUser.getPhoneNumber());
         return userSummary;
     }
 
@@ -55,8 +72,11 @@ public class UserController {
                 .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
 
         long houseCount = houseRepository.countByCreatedBy(user.getId());
+        long apartmentCount = apartmentRepository.countByCreatedBy(user.getId());
+        long carCount = carRepository.countByCreatedBy(user.getId());
 
-        UserProfile userProfile = new UserProfile(user.getId(), user.getUsername(), user.getName(), user.getCreatedAt(), houseCount);
+        UserProfile userProfile = new UserProfile(user.getId(), user.getUsername(), user.getName(), user.getCreatedAt(),
+                houseCount, apartmentCount, carCount);
 
         return userProfile;
     }
@@ -69,13 +89,19 @@ public class UserController {
         return houseService.getHousesCreatedBy(username, currentUser, page, size);
     }
 
-    /*
-    @GetMapping("/users/{username}/votes")
-    public PagedResponse<PollResponse> getPollsVotedBy(@PathVariable(value = "username") String username,
-                                                       @CurrentUser UserPrincipal currentUser,
-                                                       @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
-                                                       @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
-        return pollService.getPollsVotedBy(username, currentUser, page, size);
-    }*/
+    @GetMapping("/users/{username}/apartments")
+    public PagedResponse<ApartmentResponse> getApartmentsCreatedBy(@PathVariable(value = "username") String username,
+                                                           @CurrentUser UserPrincipal currentUser,
+                                                           @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
+                                                           @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
+        return apartmentService.getApartmentsCreatedBy(username, currentUser, page, size);
+    }
 
+    @GetMapping("/users/{username}/cars")
+    public PagedResponse<CarResponse> getCarsCreatedBy(@PathVariable(value = "username") String username,
+                                                           @CurrentUser UserPrincipal currentUser,
+                                                           @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
+                                                           @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
+        return carService.getCarsCreatedBy(username, currentUser, page, size);
+    }
 }

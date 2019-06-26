@@ -1,5 +1,8 @@
 package com.raresopariuc.licenta.service;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.raresopariuc.licenta.exception.BadRequestException;
 import com.raresopariuc.licenta.exception.ResourceNotFoundException;
 import com.raresopariuc.licenta.model.House;
@@ -21,7 +24,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -75,6 +80,43 @@ public class HouseService {
 
         List<HouseResponse> houseResponses = houses.map(house -> {
             return ModelMapper.mapHouseToHouseResponse(house, user);
+        }).getContent();
+
+        return new PagedResponse<>(houseResponses, houses.getNumber(), houses.getSize(),
+                houses.getTotalElements(), houses.getTotalPages(), houses.isLast());
+    }
+
+    public PagedResponse<HouseResponse> getHousesByFilter(UserPrincipal currentUser, int page, int size, String filters)
+            throws IOException, JsonParseException {
+
+        HashMap<String, String> result = new ObjectMapper().readValue(filters, HashMap.class);
+
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "createdAt");
+        Page<House> houses = houseRepository.findHousesByFilter(
+                result.get("internalSurfaceMin").equals("") ? null : Integer.parseInt(result.get("internalSurfaceMin")),
+                result.get("internalSurfaceMax").equals("") ? null : Integer.parseInt(result.get("internalSurfaceMax")),
+                result.get("gardenSurfaceMin").equals("") ? null : Integer.parseInt(result.get("gardenSurfaceMin")),
+                result.get("gardenSurfaceMax").equals("") ? null : Integer.parseInt(result.get("gardenSurfaceMax")),
+                result.get("numberOfRoomsMin").equals("") ? null : Integer.parseInt(result.get("numberOfRoomsMin")),
+                result.get("numberOfRoomsMax").equals("") ? null : Integer.parseInt(result.get("numberOfRoomsMax")),
+                result.get("numberOfBathroomsMin").equals("") ? null : Integer.parseInt(result.get("numberOfBathroomsMin")),
+                result.get("numberOfBathroomsMax").equals("") ? null : Integer.parseInt(result.get("numberOfBathroomsMax")),
+                result.get("yearOfConstructionMin").equals("") ? null : Integer.parseInt(result.get("yearOfConstructionMin")),
+                result.get("yearOfConstructionMax").equals("") ? null : Integer.parseInt(result.get("yearOfConstructionMax")),
+                result.get("priceMin").equals("") ? null : Integer.parseInt(result.get("priceMin")),
+                result.get("priceMax").equals("") ? null : Integer.parseInt(result.get("priceMax")),
+                pageable
+        );
+
+        if (houses.getNumberOfElements() == 0) {
+            return new PagedResponse<>(Collections.emptyList(), houses.getNumber(),
+                    houses.getSize(), houses.getTotalElements(), houses.getTotalPages(), houses.isLast());
+        }
+
+        Map<Long, User> creatorMap = getHouseCreatorMap(houses.getContent());
+
+        List<HouseResponse> houseResponses = houses.map(house -> {
+            return ModelMapper.mapHouseToHouseResponse(house, creatorMap.get(house.getCreatedBy()));
         }).getContent();
 
         return new PagedResponse<>(houseResponses, houses.getNumber(), houses.getSize(),

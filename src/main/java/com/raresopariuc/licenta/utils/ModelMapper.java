@@ -1,8 +1,8 @@
 package com.raresopariuc.licenta.utils;
 
-import com.raresopariuc.licenta.model.DBFile;
-import com.raresopariuc.licenta.model.House;
-import com.raresopariuc.licenta.model.User;
+import com.raresopariuc.licenta.model.*;
+import com.raresopariuc.licenta.payload.ApartmentResponse;
+import com.raresopariuc.licenta.payload.CarResponse;
 import com.raresopariuc.licenta.payload.HouseResponse;
 import com.raresopariuc.licenta.payload.UserSummary;
 
@@ -16,6 +16,7 @@ public class ModelMapper {
                 .id(creator.getId())
                 .username(creator.getUsername())
                 .name(creator.getName())
+                .phoneNumber(creator.getPhoneNumber())
                 .build();
 
         return HouseResponse.builder()
@@ -34,6 +35,63 @@ public class ModelMapper {
                 .creationDateTime(house.getCreatedAt())
                 .latitude(house.getLatitude())
                 .longitude(house.getLongitude())
+                .build();
+    }
+
+    public static ApartmentResponse mapApartmentToApartmentResponse(Apartment apartment, User creator) {
+
+        UserSummary creatorSummary = UserSummary.builder()
+                .id(creator.getId())
+                .username(creator.getUsername())
+                .name(creator.getName())
+                .phoneNumber(creator.getPhoneNumber())
+                .build();
+
+        return ApartmentResponse.builder()
+                .id(apartment.getId())
+                .title(apartment.getTitle())
+                .description(apartment.getDescription())
+                .price(apartment.getPrice())
+                .pictureFileIds(apartment.getPictureFiles().stream().map(DBFile::getId).collect(Collectors.toList()))
+                .internalSurface(apartment.getInternalSurface())
+                .yearOfConstruction(apartment.getYearOfConstruction())
+                .numberOfRooms(apartment.getNumberOfRooms())
+                .numberOfBathrooms(apartment.getNumberOfBathrooms())
+                .floorNumber(apartment.getFloorNumber())
+                .createdBy(creatorSummary)
+                .creationDateTime(apartment.getCreatedAt())
+                .latitude(apartment.getLatitude())
+                .longitude(apartment.getLongitude())
+                .build();
+    }
+
+    public static CarResponse mapCarToCarResponse(Car car, User creator) {
+
+        UserSummary creatorSummary = UserSummary.builder()
+                .id(creator.getId())
+                .username(creator.getUsername())
+                .name(creator.getName())
+                .phoneNumber(creator.getPhoneNumber())
+                .build();
+
+        return CarResponse.builder()
+                .id(car.getId())
+                .title(car.getTitle())
+                .description(car.getDescription())
+                .price(car.getPrice())
+                .pictureFileIds(car.getPictureFiles().stream().map(DBFile::getId).collect(Collectors.toList()))
+                .cubicCapacity(car.getCubicCapacity())
+                .power(car.getPower())
+                .mileage(car.getMileage())
+                .yearOfManufacture(car.getYearOfManufacture())
+                .fuel(car.getFuel())
+                .gearbox(car.getGearbox())
+                .emissionClass(car.getEmissionClass())
+                .vin(car.getVin())
+                .createdBy(creatorSummary)
+                .creationDateTime(car.getCreatedAt())
+                .latitude(car.getLatitude())
+                .longitude(car.getLongitude())
                 .build();
     }
 

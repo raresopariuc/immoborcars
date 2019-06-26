@@ -15,4 +15,6 @@ public class UserProfile {
     private String name;
     private Instant joinedAt;
     private Long houseCount;
+    private Long apartmentCount;
+    private Long carCount;
 }
