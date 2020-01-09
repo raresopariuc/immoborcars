@@ -1,1 +1,1 @@
-# springboot-licenta
+# Immoborcars - proiect licenta (back-end)
