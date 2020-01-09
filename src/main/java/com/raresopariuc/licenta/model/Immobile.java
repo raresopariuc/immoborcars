@@ -1,26 +1,17 @@
 package com.raresopariuc.licenta.model;
 
-import com.raresopariuc.licenta.model.audit.UserDateAudit;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 
 @MappedSuperclass
 @Getter
 @Setter
-public abstract class Immobile extends UserDateAudit {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @NotBlank
-    @Size(max = 255)
-    private String title;
+public abstract class Immobile extends Announcement {
 
     @NotNull
     @Positive

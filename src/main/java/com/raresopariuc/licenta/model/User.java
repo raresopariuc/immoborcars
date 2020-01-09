@@ -39,6 +39,10 @@ public class User extends DateAudit {
     private String email;
 
     @NotBlank
+    @Size(min = 10, max = 10)
+    private String phoneNumber;
+
+    @NotBlank
     @Size(max = 100)
     private String password;
 
@@ -52,10 +56,11 @@ public class User extends DateAudit {
 
     }
 
-    public User(String name, String username, String email, String password) {
+    public User(String name, String username, String email, String phoneNumber, String password) {
         this.name = name;
         this.username = username;
         this.email = email;
+        this.phoneNumber = phoneNumber;
         this.password = password;
     }
 
@@ -89,6 +94,14 @@ public class User extends DateAudit {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getPassword() {
